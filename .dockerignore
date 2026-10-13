@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+raw
+output
+secrets
+certs
+tmp
+.env
+.env.*

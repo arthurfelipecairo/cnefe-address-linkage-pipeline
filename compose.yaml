@@ -1,0 +1,58 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.5
+
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      xpack.ml.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+
+    ports:
+      - "127.0.0.1:9200:9200"
+
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fs http://localhost:9200/_cluster/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+    volumes:
+      - ./raw:/app/raw:ro
+      - ./output:/app/output
+
+    environment:
+      CNEFE_PATH: "/app/raw/29_BA.csv"
+      SEARCH_PATH: "/app/raw/2026_teste_tecnico_relinke_cidacs(in).csv"
+      OUTPUT_DIR: "/app/output"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_INDEX: "cnefe-enderecos-v1"
+      ELASTICSEARCH_MAPPING_PATH: "/app/elasticsearch/index_cnefe.json"
+      RECREATE_INDEX: "true"
+      INDEX_RELEVANT_MUNICIPALITIES_ONLY: "true"
+      INDEX_BATCH_SIZE: "1000"
+      MATCH_CANDIDATE_SIZE: "20"
+      MATCH_MIN_SCORE: "70"
+      MATCH_MIN_MARGIN: "2"
+      SPARK_DRIVER_MEMORY: "2g"
+      SPARK_STREAM_PARTITIONS: "128"
+
+volumes:
+  elasticsearch-data:

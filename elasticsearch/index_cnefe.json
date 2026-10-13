@@ -1,0 +1,105 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "refresh_interval": "1s",
+    "analysis": {
+      "analyzer": {
+        "endereco_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      },
+      "normalizer": {
+        "codigo_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "id_endereco": {
+        "type": "keyword"
+      },
+      "logradouro_original": {
+        "type": "text",
+        "index": false
+      },
+      "logradouro_normalizado": {
+        "type": "text",
+        "analyzer": "endereco_analyzer",
+        "fields": {
+          "exact": {
+            "type": "keyword",
+            "normalizer": "codigo_normalizer",
+            "ignore_above": 512
+          }
+        }
+      },
+      "numero_original": {
+        "type": "keyword",
+        "index": false
+      },
+      "numero_normalizado": {
+        "type": "keyword",
+        "normalizer": "codigo_normalizer"
+      },
+      "localidade_original": {
+        "type": "text",
+        "index": false
+      },
+      "localidade_normalizada": {
+        "type": "text",
+        "analyzer": "endereco_analyzer",
+        "fields": {
+          "exact": {
+            "type": "keyword",
+            "normalizer": "codigo_normalizer",
+            "ignore_above": 256
+          }
+        }
+      },
+      "cep_original": {
+        "type": "keyword",
+        "index": false
+      },
+      "cep_normalizado": {
+        "type": "keyword"
+      },
+      "municipio_original": {
+        "type": "keyword",
+        "index": false
+      },
+      "municipio_normalizado": {
+        "type": "keyword"
+      },
+      "complemento_original": {
+        "type": "text",
+        "index": false
+      },
+      "complemento_normalizado": {
+        "type": "text",
+        "analyzer": "endereco_analyzer"
+      },
+      "setor_censitario": {
+        "type": "keyword"
+      },
+      "cep_valido": {
+        "type": "boolean"
+      },
+      "municipio_valido": {
+        "type": "boolean"
+      }
+    }
+  }
+}
