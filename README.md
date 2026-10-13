@@ -5,8 +5,6 @@ de endereços da Bahia a partir do Cadastro Nacional de Endereços para Fins
 Estatísticos (CNEFE). O projeto usa **PySpark** para processamento, **Elasticsearch**
 para recuperação de candidatos e **Docker Compose** para executar o ambiente.
 
-> O enunciado estima 100 consultas, mas o CSV recebido contém 107. A pipeline
-> preserva todas as linhas reais do arquivo, sem truncar a entrada.
 
 ## Resultado da execução de referência
 
